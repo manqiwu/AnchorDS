@@ -1,6 +1,6 @@
 # AnchorDS: Anchor the Dynamic Source for Semantically Consistent Text-to-3D Generation
 
-### [Project Page](webpage/index.html)
+### [Project Page](https://anonymous.4open.science/w/AnchorDS_Webpage/)
 
 The core innovation of AnchorDS lies in anchoring dynamic sources during the generation process, which reduces the Janus problem and improves 3D consistency compared to existing SDS variant methods, producing high-quality 3D Gaussian Splatting and NeRF representations from text prompts.
 
@@ -12,13 +12,13 @@ The core innovation of AnchorDS lies in anchoring dynamic sources during the gen
 <td align="center">
 <strong>A red barn in a green field</strong><br>
 <video width="200" controls>
-<source src="webpage/videos/gs/barn.mp4" type="video/mp4">
+<source src="assets/barn.mp4" type="video/mp4">
 </video>
 </td>
 <td align="center">
 <strong>A vibrant orange pumpkin sitting on a hay bale</strong><br>
 <video width="200" controls>
-<source src="webpage/videos/gs/pumpkin.mp4" type="video/mp4">
+<source src="assets/pumpkin.mp4" type="video/mp4">
 </video>
 </td>
 </tr>
@@ -26,13 +26,13 @@ The core innovation of AnchorDS lies in anchoring dynamic sources during the gen
 <td align="center">
 <strong>A green cactus in a clay pot</strong><br>
 <video width="200" controls>
-<source src="webpage/videos/gs/cactus.mp4" type="video/mp4">
+<source src="assets/cactus.mp4" type="video/mp4">
 </video>
 </td>
 <td align="center">
 <strong>A gold glittery carnival mask</strong><br>
 <video width="200" controls>
-<source src="webpage/videos/gs/gold_mask.mp4" type="video/mp4">
+<source src="assets/gold_mask.mp4" type="video/mp4">
 </video>
 </td>
 </tr>
