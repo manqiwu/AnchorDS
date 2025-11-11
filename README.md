@@ -1,8 +1,31 @@
-# AnchorDS: Anchor the Dynamic Source for Semantically Consistent Text-to-3D Generation
+<div align="center">
+   <h1 align="center">AnchorDS:   Anchoring Dynamic Sources for Semantically Consistent Text-to-3D Generation
+   </h1>
 
-### [Project Page](https://anonymous.4open.science/w/AnchorDS_Webpage/)
+   <p>
+      <!-- <a href=https://arxiv.org/abs/2404.04037 target="_blank"><img src=https://img.shields.io/badge/arXiv-b5212f.svg?logo=arxiv height=25px></a> -->
+      <a href="https://jyzhu.top/AnchorDS_Webpage/" target="_blank"><img src= https://img.shields.io/badge/Project%20Page-bb8a2e.svg?logo=github height=25px></a>
+      <br>
+      <a href="https://wakatime.com/badge/user/7974bf3e-99a6-4d26-8e4b-38ca6d5c9c64/project/eb6c8ce3-0ede-47b8-8d9c-54ce3137a549"><img src="https://wakatime.com/badge/user/7974bf3e-99a6-4d26-8e4b-38ca6d5c9c64/project/eb6c8ce3-0ede-47b8-8d9c-54ce3137a549.svg" alt="wakatime"></a>
+      <!-- <img src="https://img.shields.io/github/languages/top/viridityzhu/AnchorDS?style&color=5D6D7E" alt="GitHub top language" />
+      <img src="https://img.shields.io/github/languages/code-size/viridityzhu/AnchorDS?style&color=5D6D7E" alt="GitHub code size in bytes" /> -->
+   </p>
+</div>
 
-The core innovation of AnchorDS lies in anchoring dynamic sources during the generation process, which reduces the Janus problem and improves 3D consistency compared to existing SDS variant methods, producing high-quality 3D Gaussian Splatting and NeRF representations from text prompts.
+<p align="center">
+  <a href="https://jyzhu.top/" target="_blank">Jiayin Zhu</a><sup>1</sup>,&nbsp;</a>
+  <a href="https://www.mu4yang.com/" target="_blank">Linlin Yang</a><sup>2</sup>,&nbsp;</a>
+  <a href="https://yl3800.github.io/" target="_blank">Yicong Li</a><sup>1</sup>,</a>
+  <a href="https://www.comp.nus.edu.sg/~ayao/" target="_blank">Angela Yao</a><sup>1</sup>;</a>
+  <br>
+  <a href="https://cvml.comp.nus.edu.sg" target="_blank">Computer Vision & Machine Learning Group</a>, National University of Singapore <sup>1</sup>
+  <br/>
+  Communication University of China <sup>2</sup>
+</p>
+
+<h3 align="center">AAAI 2026</h3>
+
+TL;DR: The core innovation of AnchorDS lies in anchoring dynamic sources during the generation process, which reduces the Janus problem and improves 3D consistency compared to existing SDS variant methods, producing high-quality 3D Gaussian Splatting and NeRF representations from text prompts.
 
 ## 🎥 Results Showcase
 
@@ -114,3 +137,17 @@ Our method provides several configuration variants:
 ## 📊 Method Overview
 
 ![Method Overview](assets/fig-methodv3.jpg)
+
+## 📄 Citation
+
+If you found this repository/our paper useful, please consider citing:
+
+``` bibtex
+@inproceedings{zhu2026AnchorDS,
+	title = {AnchorDS: Anchoring Dynamic Sources for Semantically Consistent Text-to-3D Generation},
+	author = {Zhu, Jiayin and Yang, Linlin and Li, Yicong and Yao, Angela},
+	year = {2026},
+	volume = {40},
+	booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence}
+}
+```
