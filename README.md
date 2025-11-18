@@ -3,7 +3,7 @@
    </h1>
 
    <p>
-      <!-- <a href=https://arxiv.org/abs/2404.04037 target="_blank"><img src=https://img.shields.io/badge/arXiv-b5212f.svg?logo=arxiv height=25px></a> -->
+      <a href=https://arxiv.org/abs/2511.11692 target="_blank"><img src=https://img.shields.io/badge/arXiv-b5212f.svg?logo=arxiv height=25px></a>
       <a href="https://jyzhu.top/AnchorDS_Webpage/" target="_blank"><img src= https://img.shields.io/badge/Project%20Page-bb8a2e.svg?logo=github height=25px></a>
       <br>
       <a href="https://wakatime.com/badge/user/7974bf3e-99a6-4d26-8e4b-38ca6d5c9c64/project/eb6c8ce3-0ede-47b8-8d9c-54ce3137a549"><img src="https://wakatime.com/badge/user/7974bf3e-99a6-4d26-8e4b-38ca6d5c9c64/project/eb6c8ce3-0ede-47b8-8d9c-54ce3137a549.svg" alt="wakatime"></a>
@@ -34,29 +34,33 @@ TL;DR: The core innovation of AnchorDS lies in anchoring dynamic sources during 
 <tr>
 <td align="center">
 <strong>A red barn in a green field</strong><br>
-<video width="200" controls>
+<!-- <video width="200" controls>
 <source src="assets/barn.mp4" type="video/mp4">
-</video>
+</video> -->
+<img src="assets/barn.gif" width="200">
 </td>
 <td align="center">
 <strong>A vibrant orange pumpkin sitting on a hay bale</strong><br>
-<video width="200" controls>
+<!-- <video width="200" controls>
 <source src="assets/pumpkin.mp4" type="video/mp4">
-</video>
+</video> -->
+<img src="assets/pumpkin.gif" width="200">
 </td>
 </tr>
 <tr>
 <td align="center">
 <strong>A green cactus in a clay pot</strong><br>
-<video width="200" controls>
+<!-- <video width="200" controls>
 <source src="assets/cactus.mp4" type="video/mp4">
-</video>
+</video> -->
+<img src="assets/cactus.gif" width="200">
 </td>
 <td align="center">
 <strong>A gold glittery carnival mask</strong><br>
-<video width="200" controls>
+<!-- <video width="200" controls>
 <source src="assets/gold_mask.mp4" type="video/mp4">
-</video>
+</video> -->
+<img src="assets/gold_mask.gif" width="200">
 </td>
 </tr>
 </table>
