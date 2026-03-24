@@ -195,4 +195,4 @@ load/
 
 configs/debugging/
 ./*.png
-_eval/
+_eval/nvdiffrast/
