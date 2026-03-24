@@ -370,6 +370,7 @@ class PromptProcessor(BaseObject):
             + [self.negative_prompt]
             + self.prompts_vd
             + self.negative_prompts_vd
+            + [""]
         )
         prompts_to_process = []
         for prompt in all_prompts:

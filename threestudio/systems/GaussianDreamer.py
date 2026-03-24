@@ -408,7 +408,7 @@ class GaussianDreamer(BaseLift3DSystem):
         loss_opaque = binary_cross_entropy(opacity_clamped, opacity_clamped)
         self.log("train/loss_opaque", loss_opaque)
         loss += loss_opaque * self.C(self.cfg.loss.lambda_opaque)
-        if guidance_eval:
+        if guidance_eval and "eval" in guidance_out:
             self.guidance_evaluation_save(
                 out["comp_rgb"].detach()[: guidance_out["eval"]["bs"]],
                 guidance_out["eval"],

@@ -217,34 +217,66 @@ class StableDiffusionIpAdapterGuidance(BaseObject):
         if not isinstance(ip_adapter_image, list):
             ip_adapter_image = [ip_adapter_image]
 
-        if len(ip_adapter_image) != len(self.unet.encoder_hid_proj.image_projection_layers):
+        encoder_hid_proj = getattr(self.unet, "encoder_hid_proj", None)
+        if encoder_hid_proj is None:
+            raise AttributeError("UNet is missing encoder_hid_proj required by IP-Adapter")
+
+        if hasattr(encoder_hid_proj, "image_projection_layers"):
+            image_projection_layers = list(encoder_hid_proj.image_projection_layers)
+        else:
+            # Newer diffusers may expose a single projection module (e.g., Resampler).
+            image_projection_layers = [encoder_hid_proj]
+        single_resampler_path = not hasattr(encoder_hid_proj, "image_projection_layers")
+
+        if len(ip_adapter_image) != len(image_projection_layers):
             raise ValueError(
-                f"`ip_adapter_image` must have same length as the number of IP Adapters. Got {len(ip_adapter_image)} images and {len(self.unet.encoder_hid_proj.image_projection_layers)} IP Adapters."
+                f"`ip_adapter_image` must have same length as the number of IP Adapters. Got {len(ip_adapter_image)} images and {len(image_projection_layers)} IP Adapters."
             )
 
         for single_ip_adapter_image, image_proj_layer in zip(
-            ip_adapter_image, self.unet.encoder_hid_proj.image_projection_layers
+            ip_adapter_image, image_projection_layers
         ):
             output_hidden_state = not isinstance(image_proj_layer, ImageProjection)
             single_image_embeds, single_negative_image_embeds = self.pipe.encode_image(
                 single_ip_adapter_image, device, 1, output_hidden_state
             )
 
-            image_embeds.append(single_image_embeds[None, :])
-            negative_image_embeds.append(single_negative_image_embeds[None, :])
+            if single_resampler_path:
+                image_embeds.append(single_image_embeds)
+                negative_image_embeds.append(single_negative_image_embeds)
+            else:
+                image_embeds.append(single_image_embeds[None, :])
+                negative_image_embeds.append(single_negative_image_embeds[None, :])
 
         if tgt_img is not None:
-            output_tgt_hidden_state = not isinstance(image_proj_layer, ImageProjection)
+            output_tgt_hidden_state = not isinstance(image_projection_layers[0], ImageProjection)
             single_tgt_image_embeds, _ = self.pipe.encode_image(
                 tgt_img, device, 1, output_tgt_hidden_state
             )
-
-            single_tgt_image_embeds = single_tgt_image_embeds[None, :]
+            if not single_resampler_path:
+                single_tgt_image_embeds = single_tgt_image_embeds[None, :]
 
         ip_adapter_image_embeds = []
         for i, single_image_embeds in enumerate(image_embeds):
-            single_image_embeds = torch.cat([single_image_embeds] * batch_size, dim=0)
-            single_negative_image_embeds = torch.cat([negative_image_embeds[i]] * batch_size, dim=0)
+            if single_image_embeds.shape[0] == batch_size:
+                pass
+            elif single_image_embeds.shape[0] == 1:
+                single_image_embeds = torch.cat([single_image_embeds] * batch_size, dim=0)
+            else:
+                raise ValueError(
+                    f"Unexpected image embed batch {single_image_embeds.shape[0]}, expected 1 or {batch_size}."
+                )
+
+            single_negative_image_embeds = negative_image_embeds[i]
+            if single_negative_image_embeds.shape[0] == batch_size:
+                pass
+            elif single_negative_image_embeds.shape[0] == 1:
+                single_negative_image_embeds = torch.cat([single_negative_image_embeds] * batch_size, dim=0)
+            else:
+                raise ValueError(
+                    f"Unexpected negative image embed batch {single_negative_image_embeds.shape[0]}, expected 1 or {batch_size}."
+                )
+
             if self.cfg.tgt_with_cond:
                 single_image_embeds = torch.cat([single_image_embeds, single_image_embeds], dim=0)
             else:
@@ -263,6 +295,11 @@ class StableDiffusionIpAdapterGuidance(BaseObject):
             single_image_embeds = single_image_embeds.to(device=device)
             ip_adapter_image_embeds.append(single_image_embeds.to(self.weights_dtype))
 
+        # Compatibility:
+        # - Multi-adapter path expects a list
+        # - Single Resampler path expects a tensor
+        if len(ip_adapter_image_embeds) == 1 and not hasattr(encoder_hid_proj, "image_projection_layers"):
+            return ip_adapter_image_embeds[0]
         return ip_adapter_image_embeds
 
     @torch.cuda.amp.autocast(enabled=False)
@@ -445,7 +482,11 @@ class StableDiffusionIpAdapterGuidance(BaseObject):
         # Detach latents so that gradients do not backpropagate into the latent generator.
         latents = latents.detach()
         batch_size = elevation.shape[0]
-        added_cond_kwargs = {"image_embeds": [image_cond_embeds[0][batch_size:]]}
+        if isinstance(image_cond_embeds, list):
+            finetune_image_embeds = [image_cond_embeds[0][batch_size:]]
+        else:
+            finetune_image_embeds = image_cond_embeds[batch_size:]
+        added_cond_kwargs = {"image_embeds": finetune_image_embeds}
 
         # --- Compute noise prediction via UNet (and thus IPAdapter) ---
         # Get text embeddings normally.
@@ -597,16 +638,19 @@ class StableDiffusionIpAdapterGuidance(BaseObject):
             guidance_eval_utils.update({"tgt_img": tgt_img})
 
         if guidance_eval:
-            guidance_eval_out = self.guidance_eval(**guidance_eval_utils)
-            texts = []
-            for n, e, a, c in zip(
-                guidance_eval_out["noise_levels"], elevation, azimuth, camera_distances
-            ):
-                texts.append(
-                    f"n{n:.02f}\ne{e.item():.01f}\na{a.item():.01f}\nc{c.item():.02f}"
-                )
-            guidance_eval_out.update({"texts": texts})
-            guidance_out.update({"eval": guidance_eval_out})
+            try:
+                guidance_eval_out = self.guidance_eval(**guidance_eval_utils)
+                texts = []
+                for n, e, a, c in zip(
+                    guidance_eval_out["noise_levels"], elevation, azimuth, camera_distances
+                ):
+                    texts.append(
+                        f"n{n:.02f}\ne{e.item():.01f}\na{a.item():.01f}\nc{c.item():.02f}"
+                    )
+                guidance_eval_out.update({"texts": texts})
+                guidance_out.update({"eval": guidance_eval_out})
+            except Exception as exc:
+                threestudio.warn(f"guidance_eval skipped due to runtime mismatch: {exc}")
 
         return guidance_out
 

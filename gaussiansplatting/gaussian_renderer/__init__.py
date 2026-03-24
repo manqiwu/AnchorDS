@@ -107,9 +107,8 @@ def render(viewpoint_camera, pc, pipe, bg_color : torch.Tensor, scaling_modifier
     else:
         colors_precomp = override_color
 
-    # Rasterize visible Gaussians to image, obtain their radii (on screen). 
-    # import pdb; pdb.set_trace()
-    rendered_image, radii, depth, _= rasterizer(
+    # Rasterize visible Gaussians to image and support both 3-return and 4-return APIs.
+    raster_out = rasterizer(
         means3D = means3D.float(),
         means2D = means2D.float(),
         shs = shs.float(),
@@ -118,6 +117,12 @@ def render(viewpoint_camera, pc, pipe, bg_color : torch.Tensor, scaling_modifier
         scales = scales.float(),
         rotations = rotations.float(),
         cov3D_precomp = cov3D_precomp)
+    if len(raster_out) == 4:
+        rendered_image, radii, depth, _ = raster_out
+    elif len(raster_out) == 3:
+        rendered_image, radii, depth = raster_out
+    else:
+        raise RuntimeError(f"Unexpected rasterizer output length: {len(raster_out)}")
 
     # Those Gaussians that were frustum culled or had a radius of 0 were not visible.
     # They will be excluded from value updates used in the splitting criteria.
